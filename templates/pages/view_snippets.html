@@ -29,6 +29,7 @@
                         <th scope="col">Дата создания</th>
                         <th scope="col">Удалить</th>
                         <th scope="col">Пользователь</th>
+                        <th scope="col">Тип сниппета</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -36,11 +37,14 @@
                     <tr>
                         <td scope="row">{{ snippet.id }}</td>
                         <td><a href="{% url "snippet-detail" snippet.id %}">{{ snippet.name }}</a>
+                            {% if request.user == snippet.user %}
                             <a href="{% url "snippet-delete" snippet.id %}">
                                 <i style="color: red;" class="fa-solid fa-trash fa-flip"   ></i></a>
                             <a href="{% url "snippet-edit" snippet.id %}">
                                 <i style="color: red;" class="fas fa-edit"></i></a>
+                            {% endif %}
                         </td>
+
                         {# Https://docs.djangoprojects.com/en/5.0/ref/templates/builtins/#std-templatefilter-date #}
                         <td>{{ snippet.creation_date | date:"Y-m-d H:i:s" }}</td>
                         
@@ -51,6 +55,13 @@
                             </form>
                         </td>
                         <td>{{ snippet.user.username }}</td>
+                        <td>
+                            {% if snippet.public %}
+                                Публичный
+                            {% else %}
+                                Приватный
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                     </tbody>
