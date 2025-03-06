@@ -11,6 +11,17 @@ def index_page(request):
     context = {'pagename': 'PythonBin'}
     return render(request, 'pages/index.html', context)
 
+
+@login_required
+def my_snippets(request):
+    snippets = Snippet.objects.filter(user=request.user)
+    context = {
+        'pagename': 'Мои сниппеты',
+        'snippets': snippets,
+        }
+    return render(request, 'pages/view_snippets.html', context)
+
+
 @login_required(login_url='home')
 def add_snippet_page(request):
     # Создаем пустую форму при запросе методом GET
@@ -21,6 +32,7 @@ def add_snippet_page(request):
             'form': form,
             }
         return render(request, 'pages/add_snippet.html', context)
+    
 
     # Получаем данные из формы и на их основе создаем новый snippet в БД
     if request.method == "POST":
@@ -42,6 +54,7 @@ def snippets_page(request):
         }
     return render(request, 'pages/view_snippets.html', context)
 
+
 def snippet_detail(request, snippet_id: int):
     context = {"pagename": "Просмотр сниппета"}
     try:
@@ -52,6 +65,7 @@ def snippet_detail(request, snippet_id: int):
         context["snippet"] = snippet
         context["type"] = "view"
         return render(request, "pages/snippet_detail.html", context)
+    
     
 def snippet_edit(request, snippet_id: int):
     context = {"pagename": "Редактирование сниппета"}
@@ -91,6 +105,7 @@ def snippet_delete(request, snippet_id: int):
         snippet.delete()
     return redirect("snippets-list")
 
+
 def login(request):
     if request.method == 'POST':
         username = request.POST.get("username")
@@ -107,6 +122,7 @@ def login(request):
             }
             return render(request, "pages/index.html", context)
     return redirect('home')
+
 
 def logout(request):
     auth.logout(request)
